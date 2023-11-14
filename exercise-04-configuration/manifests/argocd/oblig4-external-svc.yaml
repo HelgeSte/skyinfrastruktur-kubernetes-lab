@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oblig4-external-service
+  name: oblig4-external-service
+  namespace: argocd
+spec:
+  ports:
+  - name: oblig4-external-service
+    nodePort: 30443
+    port: 443
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/name: argocd-server
+  type: NodePort

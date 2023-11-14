@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: beetroot-application
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://gitlab.internal.uia.no/ikt210-g-23h-skyinfrastruktur/LabGroup12/exercise-04-configuration.git
+    path: manifests/beetroot
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      selfHeal: true  # src: nana
+      prune: true
+
+# Based on Nana's video
+# Other sources: [Kube 85.5] Argo CD and Kustomize
+#apiVersion: argoproj.io/v1alpha1
+#kind: Application
+#metadata:
+#  name: myapp-argo-application
+#  namespace: argocd
+#argocd-app-configargocd-app-configsspec:
+#  project: default
+#
+#  source:
+#    repoURL: https://gitlab.internal.uia.no/ikt210-g-23h-skyinfrastruktur/LabGroup12/argocd-app-config.git
+#    targetRevision: HEAD
+#    path: dev
+##  destination: 
+#    server: https://kubernetes.default.svc
+#    namespace: default
+#
+#  syncPolicy:
+#    syncOptions:
+#    - CreateNamespace=true
+#
+#    automated:
+#      selfHeal: true
+#      prune: true
+

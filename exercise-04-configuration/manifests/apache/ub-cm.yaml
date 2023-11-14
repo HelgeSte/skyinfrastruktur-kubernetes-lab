@@ -1,0 +1,25 @@
+kind: ConfigMap 
+apiVersion: v1 
+metadata: 
+  name: apache-prod-cm
+data: 
+  default.conf: | 
+    <VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html/prod
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+    </VirtualHost>
+---
+kind: ConfigMap 
+apiVersion: v1 
+metadata: 
+  name: apache-dev-cm
+data: 
+  default.conf: | 
+    <VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html/dev
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+    </VirtualHost>

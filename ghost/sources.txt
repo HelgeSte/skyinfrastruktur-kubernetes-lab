@@ -1,0 +1,5 @@
+mysql volumes:
+https://kubernetes.io/docs/tasks/run-application/run-single-instance-stateful-application/
+
+probes
+https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/

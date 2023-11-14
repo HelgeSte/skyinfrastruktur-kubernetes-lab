@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: apache-application
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://gitlab.internal.uia.no/ikt210-g-23h-skyinfrastruktur/LabGroup12/exercise-04-configuration.git
+    path: manifests/apache
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      selfHeal: true  # src: nana
+      prune: true

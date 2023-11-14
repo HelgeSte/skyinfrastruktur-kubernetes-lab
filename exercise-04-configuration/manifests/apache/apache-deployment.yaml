@@ -1,0 +1,104 @@
+kind: ConfigMap 
+apiVersion: v1 
+metadata: 
+  name: vhost-prod-cm
+data: 
+  default-prod.conf: | 
+    <VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html/prod
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+    </VirtualHost>
+---
+kind: ConfigMap 
+apiVersion: v1 
+metadata: 
+  name: vhost-dev-cm
+data: 
+  default-dev.conf: | 
+      <VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html/dev
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+      </VirtualHost>
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: www-dev-cm
+data:
+  index.html: |
+    <html>
+      <head>
+        <title>Development site</title>
+      </head>
+      <body>
+        Welcome to the development site
+      </body>
+    </html>
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: www-prod-cm
+data:
+  index.html: |
+    <html>
+      <head>
+        <title>Production site</title>
+      </head>
+      <body>
+        Welcome to the production site
+      </body>
+    </html>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: apache
+  name: apache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apache
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: apache
+    spec:
+      volumes:
+        - name: apache-dev-html
+          configMap:
+            name: www-dev-cm
+        - name: apache-prod-html
+          configMap:
+            name: www-prod-cm
+        - name: vhost-dev
+          configMap:
+            name: www-dev-cm
+        - name: vhost-prod
+          configMap:
+            name: vhost-prod-cm
+      containers:
+      - image: httpd:2.4
+        env:
+          - name: MODE
+            value: dev
+        command: ["/bin/sh", "-c", "apt update -y && apt install -y apache2 && service apache2 start && tail -f /dev/null"]
+        name: httpd
+        volumeMounts:
+          - name: apache-dev-html
+            mountPath: /var/www/dev
+          - name: apache-prod-html
+            mountPath: /var/www/prod
+          - name: vhost-dev
+            mountPath: /etc/apache2/sites-available-dev
+          - name: vhost-prod
+            mountPath: /etc/apache2/sites-available-prod
+        resources: {}
+status: {}
